@@ -6,25 +6,55 @@ namespace NeuralNetworks
     public class Neuron
     {
         public List<double> Weights { get; }
+        public List<double> Inputs { get; }
         public NeuronType NeuronType{ get; }
         public double Output { get; private set; }
+        public double Delta { get; private set; }
         public Neuron(int inputCount,NeuronType type=NeuronType.Normal)
         {
             NeuronType = type;
             Weights = new List<double>();
+            Inputs = new List<double>();
+            InitWeightsRandomValue(inputCount);
+        }
+
+        private void InitWeightsRandomValue(int inputCount)
+        {
+            Random random = new Random();
             for (int i = 0; i < inputCount; i++)
             {
-                Weights.Add(1);
+
+                if (NeuronType==NeuronType.Input)
+                {
+                    Weights.Add(1);
+                }
+                else
+                {
+                    Weights.Add(random.NextDouble());
+                }
+                Inputs.Add(0);
             }
         }
+
         public double FeedForward(List<double> inputs)
         {
+            for (int i = 0; i < inputs.Count; i++)
+            {
+                Inputs[i] = inputs[i];
+            }
             var sum = 0.0;
             for (int i = 0; i < inputs.Count; i++)
             {
                 sum += inputs[i] * Weights[i];
             }
-            Output = Sigmoid(sum);
+            if (NeuronType!=NeuronType.Input)
+            {
+                Output = Sigmoid(sum);
+            }
+            else
+            {
+                Output = sum;
+            }
             return Output;
         }
         private double Sigmoid(double x)
@@ -32,11 +62,27 @@ namespace NeuralNetworks
             var result = 1.0 / (1.0 + Math.Pow(Math.E, -x));
             return result;
         }
-        public void SetWights(params double[] weights)
+        private double SigmoidDx(double x)
         {
-            for (int i = 0; i < weights.Length; i++)
+            var sigmoid = Sigmoid(x);
+            var result = sigmoid * (1 - sigmoid);
+            return result;
+        }
+       
+        public void Learn(double error,double learningRate)
+        {
+            if (NeuronType==NeuronType.Input)
             {
-                Weights[i] = weights[i];
+                return;
+            }
+            Delta = error * SigmoidDx(Output);
+            for (int i = 0; i < Weights.Count; i++)
+            {
+                var weight = Weights[i];
+                var input = Inputs[i];
+
+                var newWeight = weight - input * Delta * learningRate;
+                Weights[i] = newWeight;
             }
         }
         public override string ToString()
