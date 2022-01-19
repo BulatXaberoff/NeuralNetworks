@@ -17,4 +17,13 @@
     <ProjectReference Include="..\NeuralNetworks\NeuralNetworks.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="image\P1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="image\UnP.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
