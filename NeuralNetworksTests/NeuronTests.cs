@@ -98,7 +98,7 @@ namespace NeuralNetworks.Tests
             var testParasitizedImageInput = converter.Convert(@"C:\Users\bulyn\Source\Repos\BulatXaberoff\NeuralNetworks\NeuralNetworksTests\image\P1.png");
             var testUnparasitizedImageInput = converter.Convert(@"C:\Users\bulyn\Source\Repos\BulatXaberoff\NeuralNetworks\NeuralNetworksTests\image\UnP.png");
 
-            var topology = new Topology(testParasitizedImageInput.Count, 1, 0.1, testParasitizedImageInput.Count / 2);
+            var topology = new Topology(testParasitizedImageInput.Length, 1, 0.1, testParasitizedImageInput.Length / 2);
             var neuralNetwork = new NeuralNetwork(topology);
             
             double[,] parasitizedInputs = GetData(parasitizedPath, converter, testParasitizedImageInput,100);
@@ -114,14 +114,14 @@ namespace NeuralNetworks.Tests
             Assert.AreEqual(0, Math.Round(unpar.Output, 2));
         }
 
-        private static double[,] GetData(string parasitizedPath, PictureConverter converter, List<int> testImageInput,int size)
+        private static double[,] GetData(string parasitizedPath, PictureConverter converter, double[] testImageInput,int size)
         {
             var parasitizedImages = Directory.GetFiles(parasitizedPath);
-            var parasitizedInputs = new double[size,testImageInput.Count];
+            var parasitizedInputs = new double[size,testImageInput.Length];
             for (int i = 0; i < size; i++)
             {
                 var image = converter.Convert(parasitizedImages[i]);
-                for (int j = 0; j < image.Count; j++)
+                for (int j = 0; j < image.Length; j++)
                 {
                     parasitizedInputs[i,j] = image[j];
                 }
